@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        background-image: url(https://wallpapercave.com/dwp1x/wp1929738.jpg), radial-gradient(circle at center, #efaa2b 0%, rgb(51, 51, 51) 50%, rgb(17, 17, 17) 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    h1 {
+        font-size: 36px;
+        text-align: center;
+        font-weight: 600;
+        color: white;
+        /* background-image: linear-gradient(to left, #009879, #1cd1ad); */
+        background-clip: text;
+        -webkit-background-clip: text;
+    }
+
+    .row {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .column {
+        display: flex;
+        padding: 5px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    thead tr {
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        color: black;
+        text-align: left;
+    }
+
+    thead th {
+        border-top: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    td,
+    th {
+        padding: 12px 15px;
+        border-left: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    tbody tr:nth-of-type(odd) {
+        text-align: center;
+        color: black;
+        background-image: linear-gradient(to right, #f4c35c, #efaa2b);
+        /* background-color: #f4c35c; */
+    }
+
+    tbody tr:nth-of-type(even) {
+        text-align: center;
+        color: black;
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        /* background-color: #f4c35c; */
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #d69418;
+    }
+
+    .sim-button {
+        background-color: #d69418;
+        border: none;
+        color: black;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .sim-button:hover {
+        background-color: #efaa2b;
+    }
+</style>
+
+<head>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <title>My Website</title>
+    <header>
+        <%- include('./partials/NavBar.ejs'); %>
+    </header>
+</head>
+
+<body>
+    <div style="display: flex; justify-content: center;">
+        <div style="padding: 30px; display: flex; justify-content: center; align-items: center;">
+            <form action="/genGame" method="POST">
+                <button id="genGameButton" class="sim-button" type="submit">Simulate Game</button>
+            </form>
+        </div>
+        <div style="padding: 30px; display: flex; justify-content: center; align-items: center;">
+            <button id="showVersus" class="sim-button">Versus</button>
+        </div>
+    </div>
+    <div style="padding: 30px">
+        <%- tableBody %>
+    </div>
+    <div style="padding: 30px">
+        <%- table2 %>
+    </div>
+    <div style="padding: 30px">
+        <table id="versusTable" style="display: none; padding: 30px">
+            <%- versusTable %>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#showVersus').click(function () {
+                $('#versusTable').toggle();
+            });
+        });
+    </script>
+</body>
+
+</html>

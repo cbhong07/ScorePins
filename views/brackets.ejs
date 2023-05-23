@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        background-image: url(https://wallpapercave.com/dwp1x/wp1929738.jpg), radial-gradient(circle at center, #efaa2b 0%, rgb(51, 51, 51) 50%, rgb(17, 17, 17) 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    button {
+        background-color: rgb(51, 51, 51);
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    button:hover {
+        background: rgb(17, 17, 17);
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        border-radius: 10px;
+    }
+
+    thead tr {
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        color: black;
+        text-align: left;
+    }
+
+    thead th {
+        border-top: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    td,
+    th {
+        padding: 12px 15px;
+        border-left: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    tbody tr:nth-of-type(even) {
+        color: black;
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        /* background-color: #efaa2b; */
+    }
+
+    tbody tr:nth-of-type(odd) {
+        color: black;
+        background-image: linear-gradient(to right, #f4c35c, #efaa2b);
+        /* background-color: #f4c35c; */
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #d69418;
+    }
+
+    .pop-up {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        padding: 10px;
+        background-color: #efaa2b;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 1;
+        border-radius: 10px;
+    }
+
+    .pop-up input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .pop-up form {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .pop-up .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: #fff;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    #search-results {
+        position: relative;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        margin-top: 5px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        background-color: #d69418;
+        border: 1px solid #d69418;
+        z-index: 1;
+    }
+
+    #search-results li:nth-of-type(even) {
+        background-color: #efaa2b;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    #search-results li:nth-of-type(odd) {
+        background-color: #f4c35c;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    #search-results li:hover,
+    #search-results li.selected {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<head>
+    <title>My Website</title>
+    <header>
+        <%- include('./partials/NavBar.ejs'); %>
+    </header>
+</head>
+
+<body>
+    <div></div>
+    <div style="padding: 50px;">
+        <table id="stats-table">
+            <thead>
+                <tr>
+                    <th style="min-width: 300px;">Brackets</th>
+                    <th colspan="2">
+                        <button id="create-btn" type="submit">Create Bracket</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <%- bracketList %>
+            </tbody>
+        </table>
+    </div>
+    <div class="pop-up" id="pop-up" style="padding-right: 20px;">
+        <form id="createForm" action="/createBracket" method="POST">
+            <a href="#" class="close-btn">&times;</a>
+            <label for="bracketName">Bracket Name:</label>
+            <input type="text" id="bracketName" name="bracketName">
+            <label for="search-input">Search:</label>
+            <input type="text" id="search-input" name="search">
+            <ul id="search-results"></ul>
+            <input type="hidden" name="bracketUsers" id="bracketUsers">
+            <button type="submit" style="text-align: center; padding-top: 10px;"><strong>Add</strong></button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const searchBtn = document.getElementById('create-btn');
+        const closeBtn = document.querySelector('.pop-up .close-btn');
+        const searchPopup = document.getElementById('pop-up');
+
+        searchBtn.addEventListener('click', function () {
+            searchPopup.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', function () {
+            // Hide the popup container
+            searchPopup.style.display = 'none';
+        });
+
+        $(document).ready(function () {
+            const searchInput = $('#search-input');
+            const searchResults = $('#search-results');
+            var checkboxStates = {};
+            var bracketUsers = [];
+
+            // Function to display search results
+            function displayResults(results, showAll = false) {
+                searchResults.empty();
+                results.forEach(function (item) {
+                    const isChecked = bracketUsers.includes(item);
+                    if (showAll || item.toLowerCase().includes(searchInput.val().toLowerCase())) {
+                        searchResults.append(`<li><input type="checkbox" name="usernames" value="${item}" ${isChecked ? 'checked' : ''}>${item}</li>`);
+                    }
+                });
+            }
+            // Display all results initially
+            $.getJSON(`/search?q=`, function (data) {
+                displayResults(data, true);
+            });
+
+            searchInput.on('input', function () {
+                const query = $(this).val();
+                $.getJSON(`/search?q=${query}`, function (data) {
+                    // Store the state of each checkbox before updating the results
+                    var checkboxes = document.getElementsByName('usernames');
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        checkboxStates[checkboxes[i].value] = checkboxes[i].checked;
+                    }
+                    displayResults(data);
+                    // Re-check the checkboxes that were checked before updating the results
+                    checkboxes = document.getElementsByName('usernames');
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        if (checkboxStates[checkboxes[i].value]) {
+                            checkboxes[i].checked = true;
+                        }
+                    }
+                });
+            });
+
+            document.getElementById('createForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var getUsers = [];
+                var checkboxes = document.getElementsByName('usernames');
+                for (let i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked == true) {
+                        getUsers.push(checkboxes[i].value);
+                    }
+                }
+                document.getElementById('bracketUsers').value = getUsers;
+                document.getElementById('createForm').submit();
+            });
+
+            document.getElementById('deleteForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const confirmDelete = confirm('Are you sure you want to delete this bracket?');
+                if (confirmDelete) {
+                    document.getElementById('bracketName2').value = header;
+                    document.getElementById('deleteForm').submit();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

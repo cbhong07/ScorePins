@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        background-image: url(https://wallpapercave.com/dwp1x/wp1929738.jpg), radial-gradient(circle at center, #efaa2b 0%, rgb(51, 51, 51) 50%, rgb(17, 17, 17) 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    h1 {
+        font-size: 36px;
+        text-align: center;
+        font-weight: 600;
+        color: white;
+        /* background-image: linear-gradient(to left, #009879, #1cd1ad); */
+        background-clip: text;
+        -webkit-background-clip: text;
+    }
+
+    .row {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .column {
+        display: flex;
+        padding: 5px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    thead tr {
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        color: black;
+        text-align: left;
+    }
+
+    thead th {
+        border-top: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    td,
+    th {
+        padding: 12px 15px;
+        border-left: 2px solid #d69418;
+        border-right: 2px solid #d69418;
+    }
+
+    tbody tr:nth-of-type(even) {
+        color: black;
+        background-image: linear-gradient(to right, #efaa2b, #f4c35c);
+        /* background-color: #efaa2b; */
+    }
+
+    tbody tr:nth-of-type(odd) {
+        color: black;
+        background-image: linear-gradient(to right, #f4c35c, #efaa2b);
+        /* background-color: #f4c35c; */
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #d69418;
+    }
+
+    #friends-table {
+        margin: 0 auto;
+    }
+
+    .search-btn {
+        background-color: #efaa2b;
+        border: none;
+        color: black;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+
+    .search-btn:hover {
+        background: #f2bc5d;
+    }
+
+    .add-btn {
+        background-color:#f2bc5d;
+        border: none;
+        color: black;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+
+    .add-btn:hover {
+        background:#d69418;
+    }
+
+    .table-button {
+        background-color: rgb(51, 51, 51);
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .table-button:hover,
+    .table-button:focus {
+        background-color: rgb(17, 17, 17);
+    }
+
+    a {
+        font-size: 0.9em;
+        font-family: sans-serif;
+        color: black;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: rgb(51, 51, 51);
+    }
+
+    .search-popup {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        padding: 10px;
+        background-color: #efaa2b;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 1;
+        border-radius: 10px;
+    }
+
+    .search-popup input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-popup form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .search-popup .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: #fff;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    #search-results {
+        position: relative;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        margin-top: 5px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        background-color: #d69418;
+        border: 1px solid #d69418;
+        z-index: 1;
+    }
+
+    #search-results li:nth-of-type(even) {
+        background-color: #efaa2b;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    #search-results li:nth-of-type(odd) {
+        background-color: #f4c35c;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    #search-results li:hover,
+    #search-results li.selected {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<head>
+    <title>My Website</title>
+    <header>
+        <%- include('./partials/NavBar.ejs'); %>
+    </header>
+</head>
+
+<body>
+    <div>
+        <h1>Friends List</h1>
+    </div>
+    <div class="row">
+        <div class="column">
+            <table id="friends-table">
+                <thead>
+                    <tr>
+                        <th>Friends</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%- friendTable %>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button class="search-btn" id="search-btn" style="border-radius: 10px;">Add Friend</button>
+            <div class="search-popup" id="search-popup">
+                <a href="#" class="close-btn">&times;</a>
+                <form action="/addFriend" method="POST">
+                    <input type="hidden" name="username" value="<%- user %>">
+                    <div style="color:#fff; text-align: center;"><strong>Search for User</strong></div>
+                    <input type="text" id="search-input" name="search">
+                    <ul id="search-results"></ul>
+                    <button class="add-btn" type="submit"><strong>Add</strong></button>
+                </form>
+            </div>
+        </div>
+        <div class="column">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pending</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%- pendingTable %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const searchBtn = document.getElementById('search-btn');
+        const closeBtn = document.querySelector('.search-popup .close-btn');
+        const searchPopup = document.getElementById('search-popup');
+
+        searchBtn.addEventListener('click', function () {
+            searchPopup.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', function () {
+            // Hide the popup container
+            searchPopup.style.display = 'none';
+        });
+
+        $(document).ready(function () {
+            const searchInput = $('#search-input');
+            const searchResults = $('#search-results');
+
+            // Function to display search results
+            function displayResults(results) {
+                searchResults.empty();
+                results.forEach(function (item) {
+                    searchResults.append(`<li>${item}</li>`);
+                });
+            }
+
+            // Function to select a search result and fill the search box
+            function selectResult(result) {
+                searchInput.val(result);
+                searchResults.empty();
+            }
+
+            // Function to handle keydown events on the search box
+            searchInput.on('keydown', function (event) {
+                if (event.keyCode === 9) {  // Tab key
+                    const results = searchResults.find('li');
+                    if (results.length > 0) {
+                        selectResult(results.eq(0).text());
+                        event.preventDefault();
+                    }
+                } else if (event.keyCode === 38) {  // Up arrow key
+                    const results = searchResults.find('li');
+                    if (results.length > 0) {
+                        const current = searchResults.find('.selected');
+                        const index = results.index(current);
+                        current.removeClass('selected');
+                        results.eq((index - 1 + results.length) % results.length).addClass('selected');
+                        event.preventDefault();
+                    }
+                } else if (event.keyCode === 40) {  // Down arrow key
+                    const results = searchResults.find('li');
+                    if (results.length > 0) {
+                        const current = searchResults.find('.selected');
+                        const index = results.index(current);
+                        current.removeClass('selected');
+                        results.eq((index + 1) % results.length).addClass('selected');
+                        event.preventDefault();
+                    }
+                } else if (event.keyCode === 13) {  // Enter key
+                    const current = searchResults.find('.selected');
+                    if (current.length > 0) {
+                        selectResult(current.text());
+                        event.preventDefault();
+                    }
+                }
+            });
+
+            // Function to handle click events on search results
+            searchResults.on('click', 'li', function () {
+                selectResult($(this).text());
+            });
+
+            // Function to handle input events on the search box
+            searchInput.on('input', function () {
+                const query = $(this).val();
+
+                $.getJSON(`/search?q=${query}`, function (data) {
+                    displayResults(data);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
